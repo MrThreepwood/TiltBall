@@ -25,8 +25,8 @@ public class TiltBallActivity extends Activity implements SensorEventListener, V
     Handler mHandler = new Handler(); //so redraw occurs in main thread
     Timer mTmr = null;
     int mScrWidth, mScrHeight;
-    float dragCoeff = .1f;
-    float accelCoeff = .1f;
+    float dragCoeff = .02f;
+    float accelCoeff = .06f;
     PointF mBallPos = new PointF(0,0);
     PointF mBallSpd = new PointF(0,0);
     PointF mBallAcl = new PointF(0,0);
@@ -55,7 +55,7 @@ public class TiltBallActivity extends Activity implements SensorEventListener, V
         mBallAcl.x = 0;
         mBallAcl.y = 0;
         //create initial ball
-        mBallView = new BallView(this, mBallPos.x, mBallPos.y, 5);
+        mBallView = new BallView(this, mBallPos.x, mBallPos.y, 10);
 
         mainView.addView(mBallView); //add ball to main screen
         mBallView.invalidate(); //call onDraw in BallView
@@ -126,10 +126,22 @@ public class TiltBallActivity extends Activity implements SensorEventListener, V
             mBallPos.x += mBallSpd.x;
             mBallPos.y += mBallSpd.y;
             //if ball goes off screen, reposition to opposite side of screen
-            if (mBallPos.x > mScrWidth) mBallPos.x = 0;
-            if (mBallPos.y > mScrHeight) mBallPos.y = 0;
-            if (mBallPos.x < 0) mBallPos.x = mScrWidth;
-            if (mBallPos.y < 0) mBallPos.y = mScrHeight;
+            if (mBallPos.x > mScrWidth){
+                mBallPos.x = mScrWidth;
+                mBallSpd.x = -mBallSpd.x;
+            }
+            if (mBallPos.y > mScrHeight){
+                mBallSpd.y = -mBallSpd.y;
+                mBallPos.y = mScrHeight;
+            }
+            if (mBallPos.x < 0) {
+                mBallSpd.x = -mBallSpd.x;
+                mBallPos.x = 0;
+            }
+            if (mBallPos.y < 0){
+                mBallPos.y = 0;
+                mBallSpd.y = -mBallSpd.y;
+            }
 
             //update ball class instance
             mBallView.x = mBallPos.x;
